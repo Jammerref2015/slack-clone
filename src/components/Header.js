@@ -30,7 +30,7 @@
      )
  }
  
- export default Header
+ export default Header;
  // rfec then ->|
 
  const HeaderSearch = styled.div`

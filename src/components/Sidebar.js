@@ -14,7 +14,7 @@ import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import AddIcon from "@material-ui/icons/Add";
 import { useCollection } from "react-firebase-hooks/firestore"
-import { db } from '../../firebase';
+import { db } from '../firebase';
 
 
 
