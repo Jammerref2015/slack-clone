@@ -1,9 +1,9 @@
 import React from 'react';
 import './App.css';
-import Header from "./components/Header";
 import styled from "styled-components";
 import Sidebar from "./components/Sidebar";
 import Chat from "./components/Chat";
+import Header from "./components/Header";
 import {
   BrowserRouter as Router,
   Switch,
