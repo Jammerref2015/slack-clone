@@ -26,7 +26,7 @@ function Sidebar() {
     <SidebarContainer>
       <SidebarHeader>
         <SidebarInfo>
-          <h2>PAPA FAM HQ</h2>
+          <h2>Adrian Looney</h2>
           <h3>
             <FiberManualRecordIcon />
             {user?.displayName}

@@ -4,35 +4,45 @@ import StarBorderOutlinedIcon from "@material-ui/icons/StarBorderOutlined";
 import ChatInput from "./ChatInput";
 import { useSelector } from "react-redux";
 import { selectRoomId } from "../features/appSlice";
+import { useCollection, useDocument } from "react-firebase-hooks/firestore";
 import styled from "styled-components";
+import { db } from "../firebase";
 
 function Chat() {
  
   const roomId = useSelector(selectRoomId);
+  const [roomDetails] = useCollection(
+    roomId && db.collection("rooms").doc(roomId)
+  );
+  const [roomMessages] = useCollection(
+    roomId &&
+      db
+        .collection("rooms")
+        .doc(roomId)
+        .collection("messages")
+        .orderBy("timestamp", "asc")
+  );
   
+
   
   return (
     <ChatContainer>
         <>
-          <Header>
+        <Header>
             <HeaderLeft>
               <h4>
-                <strong>#</strong>
+                <strong>#{roomDetails?.data().name}</strong>
                 <StarBorderOutlinedIcon />
               </h4>
             </HeaderLeft>
+            
             <HeaderRight>
               <p>
                 <InfoOutlinedIcon /> Details
               </p>
             </HeaderRight>
           </Header>
-
-       
-
-          <ChatInput
-            channelId={roomId}
-          />
+          <ChatInput channelName = {roomDetails?.data().name} channelId={roomId} />
         </>
     </ChatContainer>
   );
@@ -48,8 +58,8 @@ const ChatContainer = styled.div`
 
 const Header = styled.div`
   display: flex;
-  justify-content: space-between;
-  padding: 20px;
+  justify-content: space-space-between;
+  padding: 60px; /* Was 20px. Need to fix this. */ 
   border-bottom: 1px solid lightgray;
 `;
 
@@ -76,3 +86,6 @@ const HeaderRight = styled.div`
   }
 `;
 
+const ChatBottom = styled.div`
+  padding-bottom: 200px;
+`;

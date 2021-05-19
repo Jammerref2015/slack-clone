@@ -4,7 +4,7 @@ import { Button } from "@material-ui/core";
 import styled from "styled-components";
 import { db } from "../firebase";
 
-function ChatInput({ channelId }) {
+function ChatInput({channelName, channelId }) {
   const [input, setInput] = useState("");
   
 
@@ -29,7 +29,7 @@ function ChatInput({ channelId }) {
     <ChatInputContainer>
       <form>
         <input
-          placeholder={`Message`}
+          placeholder={`Message #${channelName}`}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           type="text"
@@ -64,6 +64,3 @@ const ChatInputContainer = styled.div`
     display: none !important;
   }
 `;
-
-
-
