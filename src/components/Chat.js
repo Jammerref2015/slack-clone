@@ -1,20 +1,21 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
+import { db } from "../firebase";
 import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
 import StarBorderOutlinedIcon from "@material-ui/icons/StarBorderOutlined";
+import Message from "./Message";
 import ChatInput from "./ChatInput";
+import { useCollection } from "react-firebase-hooks/firestore";
 import { useSelector } from "react-redux";
 import { selectRoomId } from "../features/appSlice";
-import { useCollection, useDocument } from "react-firebase-hooks/firestore";
 import styled from "styled-components";
-import { db } from "../firebase";
 
 function Chat() {
- 
+  const chatRef = useRef(null);
   const roomId = useSelector(selectRoomId);
   const [roomDetails] = useCollection(
     roomId && db.collection("rooms").doc(roomId)
   );
-  const [roomMessages] = useCollection(
+  const [roomMessages, roomLoading] = useCollection(
     roomId &&
       db
         .collection("rooms")
@@ -22,28 +23,52 @@ function Chat() {
         .collection("messages")
         .orderBy("timestamp", "asc")
   );
-  
 
-  
+  useEffect(() => {
+    chatRef?.current?.scrollIntoView();
+  }, [roomId, roomLoading]);
+
   return (
     <ChatContainer>
+      {roomDetails && roomMessages && (
         <>
-        <Header>
+          <Header>
             <HeaderLeft>
               <h4>
                 <strong>#{roomDetails?.data().name}</strong>
                 <StarBorderOutlinedIcon />
               </h4>
             </HeaderLeft>
-            
             <HeaderRight>
               <p>
                 <InfoOutlinedIcon /> Details
               </p>
             </HeaderRight>
           </Header>
-          <ChatInput channelName = {roomDetails?.data().name} channelId={roomId} />
+
+          <div className="chat__messages">
+            {roomMessages?.docs.map((doc) => {
+              const { message, timestamp, user, userImage } = doc.data();
+              return (
+                <Message
+                  key={doc.id}
+                  message={message}
+                  timestamp={timestamp}
+                  user={user}
+                  userImage={userImage}
+                />
+              );
+            })}
+            <ChatBottom ref={chatRef} />
+          </div>
+
+          <ChatInput
+            chatRef={chatRef}
+            channelName={roomDetails.data().name}
+            channelId={roomId}
+          />
         </>
+      )}
     </ChatContainer>
   );
 }
@@ -58,8 +83,8 @@ const ChatContainer = styled.div`
 
 const Header = styled.div`
   display: flex;
-  justify-content: space-space-between;
-  padding: 60px; /* Was 20px. Need to fix this. */ 
+  justify-content: space-between;
+  padding: 20px;
   border-bottom: 1px solid lightgray;
 `;
 
@@ -68,6 +93,7 @@ const HeaderLeft = styled.div`
     display: flex;
     text-transform: lowercase;
   }
+
   > h4 > .MuiSvgIcon-root {
     margin-left: 10px;
     font-size: 18px;
@@ -80,6 +106,7 @@ const HeaderRight = styled.div`
     align-items: center;
     font-size: 14px;
   }
+
   > p > .MuiSvgIcon-root {
     margin-right: 5px !important;
     font-size: 16px;

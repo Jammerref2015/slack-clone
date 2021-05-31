@@ -1,12 +1,14 @@
 import React, { useState } from "react";
+
+import { auth, db } from "../firebase";
 import firebase from "firebase";
 import { Button } from "@material-ui/core";
+import { useAuthState } from "react-firebase-hooks/auth";
 import styled from "styled-components";
-import { db } from "../firebase";
 
-function ChatInput({channelName, channelId }) {
+function ChatInput({ channelName, channelId, chatRef }) {
   const [input, setInput] = useState("");
-  
+  const [user] = useAuthState(auth);
 
   const sendMessage = (e) => {
     e.preventDefault();
@@ -19,17 +21,21 @@ function ChatInput({channelName, channelId }) {
     db.collection("rooms").doc(channelId).collection("messages").add({
       message: input,
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-      user: 'Adrian Looney',
-      userImage: 'https://media-exp1.licdn.com/dms/image/C4D03AQGTRlTwXMol2g/profile-displayphoto-shrink_800_800/0/1590830877133?e=1626307200&v=beta&t=qhqDe643-AchkNFlj38kuYL2KbNRyKdGiKcA6nIz6mY'
+      user: 'adrian looney',
+      userImage: '#',
     });
 
+    chatRef.current.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+    });
     setInput("");
   };
   return (
     <ChatInputContainer>
       <form>
         <input
-          placeholder={`Message #${channelName}`}
+          placeholder={`Message #${channelName.toLowerCase()}`}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           type="text"
@@ -46,11 +52,13 @@ export default ChatInput;
 
 const ChatInputContainer = styled.div`
   border-radius: 20px;
+
   > form {
     position: relative;
     display: flex;
     justify-content: center;
   }
+
   > form > input {
     position: fixed;
     bottom: 30px;
@@ -60,6 +68,7 @@ const ChatInputContainer = styled.div`
     padding: 20px;
     outline: none;
   }
+
   > form > button {
     display: none !important;
   }
