@@ -22,7 +22,7 @@ function Header() {
       </HeaderLeft>
       <HeaderSearch className="header__search">
         <SearchIcon />
-        <input placeholder="Search PAPAFAM" type="text" />
+        <input placeholder="Search" type="text" />
       </HeaderSearch>
       <HeaderRight>
         <HelpOutlineIcon />
